@@ -1,8 +1,11 @@
 /_build
 /fichiers
 /#elimination.ml#
-/parser_formula.mly.old
 /Copy of lexer_formula.mll
 /Copy of parser_formula.mly
+/one_shot.d.byte
+/one_shot.native
+/parser_formula.mly.old
+/tatl.native
 /tests.ml
 /XX_Questions en suspens
