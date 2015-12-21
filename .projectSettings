@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="OcamlProjectSettings">
+	<section name="OcamlbuildSettings">
+		<item value="-I,/usr/lib/ocaml/ocamlgraph" key="ocamlbuildProjectLinkerFlags"/>
+		<item value="graph,str" key="ocamlbuildProjectLibs"/>
+		<item value="" key="ocamlbuildProjectOtherFlags"/>
+		<item value="-I,/usr/lib/ocaml/ocamlgraph" key="ocamlbuildProjectCompilerFlags"/>
+		<item value="true" key="ocamlbuildGenerateTypeInfo"/>
+		<item value="tatl.native,one_shot.native,tatl.d.byte,one_shot.d.byte" key="ocamlbuildProjectTargets"/>
+	</section>
+</section>

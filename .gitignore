@@ -1,0 +1,8 @@
+/_build
+/fichiers
+/#elimination.ml#
+/parser_formula.mly.old
+/Copy of lexer_formula.mll
+/Copy of parser_formula.mly
+/tests.ml
+/XX_Questions en suspens
