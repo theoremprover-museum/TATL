@@ -240,13 +240,19 @@ let string_of_path_formulae ens_formulae =
 	| t::q -> (string_of_path_line t)^" ; "^(string_of q)
 	in string_of lst_formulae
 
-let string_of_tuples set_tuples = 
-	let tuples = Tuple_Formulae.elements set_tuples in 
+let string_of_lst_tuples tuples = 
 	let rec string_of lst = match lst with
 	| [] -> ""
-	| [x] -> (string_of_formula x.frm "line") ^ "<:>" ^ (string_of_path_formulae x.path_frm) ^ "<:>" ^ (string_of_formula x.next_frm "line");
-	| t::q -> (string_of_formula t.frm "line") ^ "<:>" ^ (string_of_path_formulae t.path_frm) ^ "<:>" ^ (string_of_formula t.next_frm "line") ^ " ; " ^ (string_of q)
+	| [x] -> (string_of_formula x.frm "line") ^ "<:>" ^ (string_of_path_formulae x.path_frm) ^ "<:>" ^ 
+	(string_of_formula x.next_frm "line") ^ "<:>" ^ (string_of_formula x.frm_origin "line");
+	| t::q -> (string_of_formula t.frm "line") ^ "<:>" ^ (string_of_path_formulae t.path_frm) ^ "<:>" ^ 
+	(string_of_formula t.next_frm "line") ^ "<:>" ^ (string_of_formula t.frm_origin "line") ^ " ; " ^ (string_of q)
 	in string_of tuples
+
+
+let string_of_tuples set_tuples = 
+	let tuples = Tuple_Formulae.elements set_tuples in 
+	string_of_lst_tuples tuples
 
 let string_of_set_tuple set_tuple = 
 	let lst_tuples = Set_Tuple_Formulae.elements set_tuple in 
@@ -264,7 +270,8 @@ let string_of_set_tuple set_tuple =
 (* data on the web                                                         *)
 let string_of_state state media = 
 	if media = "web" then  "#N#" ^  state.name ^ "\n#F#" ^ (string_of_formulae state.ens_frm "web")^"\n"
-	else  state.name ^ " : " ^ (string_of_formulae state.ens_frm "line") ^"\n"
+	else  state.name ^ " : " ^ (string_of_formulae state.ens_frm "line") ^"\n" ^ 
+	      "[debug] liste eventualites: " ^ (string_of_lst_tuples state.event) ^ "\n"
 	
 (* get all the vertexes and sort them *)
 let sort_vertex_graph graph =

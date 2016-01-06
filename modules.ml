@@ -103,6 +103,7 @@ type formula_tuple = {
 		frm: state_formula;
 		path_frm: Path_Formulae.t;
 		next_frm: state_formula;
+		frm_origin: state_formula;	
 	}
 			
 let compare_tuple t1 t2 = compare_formula t1.frm t2.frm

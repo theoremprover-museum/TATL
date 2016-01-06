@@ -47,7 +47,7 @@ let get_or_create_state ens_formulae lst_event =
 			
 (* For prestates *)
 (* return a new vertex if the set of formulae does not already exist or return the vertex corresponding to the set of formulae *) 
-let get_or_create_prestate ens_formulae = 
+let get_or_create_prestate ens_formulae lst_tuple= 
 	(* new? : try ... with *)
 	try
 		(Hashtbl.find h_prestates (string_of_formulae ens_formulae "line"), false)
@@ -56,7 +56,7 @@ let get_or_create_prestate ens_formulae =
 		   name = generator_pre_state false;
 		   category = V_Prestate;
 		   ens_frm = ens_formulae;
-			 event = [];
+			 event = lst_tuple;
 		   assoc_movecs = Movecs.empty;
 		   lst_next_pos = [];
   		 lst_next_neg = [];
@@ -93,7 +93,7 @@ let cons_from_pre lst_pre_todo  =
 							else
 								(Graph_tableau.remove_vertex tableau vertex; treat_lst t lst_new ) 
 			in 
-    		let lst_ens_tuple = Set_Tuple_Formulae.elements (rule_sr label_pre.ens_frm) in 
+    		let lst_ens_tuple = Set_Tuple_Formulae.elements (rule_sr label_pre.ens_frm label_pre.event) in 
 	  		let lst_n = treat_lst lst_ens_tuple lst_new in cons_from q lst_n
    in cons_from lst_pre_todo []  		
 		
@@ -102,15 +102,19 @@ let cons_from_states lst_states_todo =
      | [] -> lst_new
      | state::q -> 
 			  let ls = Graph_tableau.V.label state in         (* for each state to be treated *)
-        let rec treat_lst lst_ens lst_new = match lst_ens with    (* lst_ens is list of set of formulae *)
+        let rec treat_lst lst_ens_tuple lst_new = match lst_ens_tuple with    (* lst_ens is list of set of formulae *)
         | [] ->  lst_new
-        | (ens_frm,ens_mv)::t -> 
-					  let (vertex, is_new) = get_or_create_prestate ens_frm in 
+        | ((ens_frm,ens_mv),tuple_frm)::t -> 
+					let lst_tuple = Tuple_Formulae.fold (
+						fun tuple l -> if is_eventuality tuple.frm then	tuple::l else l
+					) tuple_frm [] 
+					in 
+					  let (vertex, is_new) = get_or_create_prestate ens_frm lst_tuple in 
 						Graph_tableau.add_edge_e tableau (Graph_tableau.E.create state ens_mv vertex); (* add a node and a labeled edge *)
             if is_new then treat_lst t (vertex::lst_new) else treat_lst t lst_new 
 				in 
-        let lst_ens_formulae = get_formulae_next_rule ls  in
-        let lst_n = treat_lst lst_ens_formulae lst_new in cons_from q lst_n
+        let lst_ens_formulae_tuple = get_formulae_next_rule ls  in
+        let lst_n = treat_lst lst_ens_formulae_tuple lst_new in cons_from q lst_n
     in cons_from lst_states_todo []       
 
 let rec construct_state lst_pre_todo = 
@@ -124,12 +128,18 @@ and construct_pre lst_states_todo =
     | [] -> ()         (* the construction is finished, so we stop *)
     | lst -> construct_state lst ;;
 
+let get_eventualities_fst_pre set_frm =
+	State_Formulae.fold ( 
+			fun f lst ->
+		 if Global.is_eventuality f then {frm=f; path_frm=Path_Formulae.empty; next_frm=Top; frm_origin=f}::lst else lst
+		) set_frm [] 
+
 (* return true if a formula is satisfiable and false otherwise *)
 (* parse the formula, construct the tableau and the tableau of the formula to determine its satisfiability *)
 let is_satisfiable set_frm media =
    (* Construction phase *)
    let vertex0 = Graph_tableau.V.create {
-      name = "P0"; category = V_Prestate; ens_frm = set_frm; event=[];
+      name = "P0"; category = V_Prestate; ens_frm = set_frm; event=get_eventualities_fst_pre set_frm;
       assoc_movecs = Movecs.empty; lst_next_pos = [] ; lst_next_neg = [] ; lst_next_agents = [] ; nb_pos = -1 ;  nb_neg = -1 } in 
 			Graph_tableau.add_vertex tableau vertex0;
    Hashtbl.add h_prestates (string_of_formulae set_frm "line") vertex0; 

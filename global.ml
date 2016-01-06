@@ -42,8 +42,8 @@ n = Graph_model.V.create
 	prop = State_Formulae.empty;	
 } in
 let l = {value=0;
-         lst=[(vertex,{frm= Top; path_frm= Path_Formulae.empty;next_frm= Top;})];
-				 lst2=[(vertex,{frm= Top; path_frm= Path_Formulae.empty;next_frm= Top;})];
+         lst=[(vertex,{frm= Top; path_frm= Path_Formulae.empty;next_frm= Top; frm_origin=Top;})];
+				 lst2=[(vertex,{frm= Top; path_frm= Path_Formulae.empty;next_frm= Top; frm_origin=Top;})];
         }
 in Hashtbl.add h_prestates "" v; Hashtbl.clear h_prestates; 
    Hashtbl.add h_states "" v; Hashtbl.clear h_states;

@@ -169,9 +169,13 @@ end
 
 
 (* return the gamma-components of a gamma-formula *)
-let gamma_comp formula = 
-	contains_next:= contains_next_frm_state formula;  
-	match formula with
+let gamma_comp formula f_origin = 
+	contains_next:= contains_next_frm_state formula;
+	let origin = match f_origin with 
+	| Top -> formula
+	| _ -> f_origin
+	  
+  in match formula with
 | Coal(la,f) -> let set_tuple = gamma_sets f in 
   Gamma_sets.fold (fun t ens -> 
 		let ens_f1 = t.f1 and ens_f2 = t.f2 and f3 = get_and_OrP_formula_from t.f3 in  (* Attention suppression du clear_setAnd ici *)
@@ -179,7 +183,7 @@ let gamma_comp formula =
   	let form = match f3 with
   		| State Top -> f1
   		| _ ->	And(f1,Coal(la,Next(State(Coal(la,f3))))) 
-  	in Tuple_Formulae.add {frm =form; path_frm = ens_f2 ; next_frm=Coal(la,f3)}  ens
+  	in Tuple_Formulae.add {frm =form; path_frm = ens_f2 ; next_frm=Coal(la,f3); frm_origin = origin;}  ens
   ) set_tuple Tuple_Formulae.empty 
 | CoCoal(la,f) ->  let set_tuple = gamma_sets f in 
   Gamma_sets.fold (fun t ens -> 
@@ -188,6 +192,6 @@ let gamma_comp formula =
 		let form = match f3 with
   		| State Top -> f1
   		| _ ->	And(f1,CoCoal(la,Next(State(CoCoal(la,f3))))) 
-  	in Tuple_Formulae.add {frm =form; path_frm = ens_f2; next_frm=CoCoal(la,f3)}  ens
+  	in Tuple_Formulae.add {frm =form; path_frm = ens_f2; next_frm=CoCoal(la,f3); frm_origin = origin;}  ens
   ) set_tuple Tuple_Formulae.empty 
 | _ -> raise Except.Impossible_case 
