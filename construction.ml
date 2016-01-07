@@ -46,9 +46,9 @@ let rec saturation formula = match formula.frm with
 
 
 let search_origin formula lst_event =  
- let search lst = match lst with
-| [] -> Top
-| t::q -> if formula = t.frm then t.frm_origin else t.frm
+ let rec search lst = match lst with
+| [] -> formula
+| t::q -> if formula = t.frm then t.frm_origin else search q
 in search lst_event
 
 (* Do the saturation for all formulae of the set ens_formulae to get the *)
@@ -115,39 +115,42 @@ let function_co_sigma movec nb_pos nb_neg =
 	(Agents.fold (fun ag sum -> (List.assoc ag movec) - nb_pos + sum) ens_agent 0) mod nb_neg
 
 let search_origin_from_next_frm formula lst_event =  
- let search lst = match lst with
-| [] -> Top
-| t::q -> if formula = t.next_frm 
+	print_endline ("[debug]search_origin (formula): " ^ Pretty_printer.string_of_formula formula "line");
+ let rec search lst = match lst with
+| [] -> formula
+| t::q -> 
+	print_endline ("[debug]search_origin (t.next_frm):" ^ Pretty_printer.string_of_formula t.next_frm "line");
+	if formula = t.next_frm 
    then t.frm_origin 
-	 else t.next_frm
+	 else search q
 in search lst_event
 
 (* compute the function Gamma(sigma) for a given move vector and a set of  *)
 (* next-time formulae depending on the Gamma function                      *)
-let function_gamma_sigma movec lst_next_enforc lst_next_unavoid lst_next_agents nb_pos nb_neg lst_event =
+let function_gamma_sigma movec lst_next_enforc lst_next_unavoid lst_next_agents nb_pos nb_neg lst_event = (* lst_event: liste des eventualités dans l'état *)
 	let (ens_st_form,tuple_frm) = List.fold_left ( fun (ens,tuple) nf -> match nf with     (* get the enforceable formulae *)
 	 | (n,Coal(la,Next(State f))) -> 
 				let origin = search_origin_from_next_frm f lst_event in 
-				let tuple = Tuple_Formulae.add {frm=f; path_frm=Path_Formulae.empty; next_frm=Top; frm_origin=origin} tuple in
+				let tuple_new = Tuple_Formulae.add {frm=f; path_frm=Path_Formulae.empty; next_frm=Top; frm_origin=origin} tuple in
 				if Agents.for_all (fun a -> (List.assoc a movec) == n) la 
-				then (State_Formulae.add f ens, tuple) else (ens, tuple)
+				then (State_Formulae.add f ens, tuple_new) else (ens, tuple)
    | _ -> raise Except.Impossible_case
 	) (State_Formulae.empty,Tuple_Formulae.empty) lst_next_enforc 
 	in let (ens_st_form,tuple_frm) = List.fold_left ( fun (ens,tuple) nf -> match nf with  (* get the proper unavoidable formulae *)
 		| (n,CoCoal(la,Next(State f))) ->
 			let origin = search_origin_from_next_frm f lst_event in 
-			let tuple = Tuple_Formulae.add {frm=f; path_frm=Path_Formulae.empty; next_frm=Top; frm_origin=origin} tuple in
+			let tuple_new = Tuple_Formulae.add {frm=f; path_frm=Path_Formulae.empty; next_frm=Top; frm_origin=origin} tuple in
 			if  (function_co_sigma movec nb_pos nb_neg) == n && 
 		        Agents.subset (Agents.diff !ag_all la) (function_n_sigma movec nb_pos)		 
 			then
-				(State_Formulae.add f ens,tuple) else (ens,tuple)
+				(State_Formulae.add f ens,tuple_new) else (ens,tuple)
 		| _ -> raise Except.Impossible_case
 	) (ens_st_form,tuple_frm) lst_next_unavoid 
 	in let (ens_st_form,tuple_frm) = List.fold_left (fun (ens,tuple) nf -> match nf with
 		| CoCoal (_, Next(State f)) -> 
 			let origin = search_origin_from_next_frm f lst_event in 
-			let tuple = Tuple_Formulae.add {frm=f; path_frm=Path_Formulae.empty; next_frm=Top; frm_origin=origin} tuple in
-			(State_Formulae.add f ens,tuple) 
+			let tuple_new = Tuple_Formulae.add {frm=f; path_frm=Path_Formulae.empty; next_frm=Top; frm_origin=origin} tuple in
+			(State_Formulae.add f ens,tuple_new) 
 		| _ -> raise Except.Impossible_case
 	) (ens_st_form,tuple_frm) lst_next_agents
 	in if State_Formulae.is_empty ens_st_form then (State_Formulae.singleton Top,Tuple_Formulae.empty) else (ens_st_form,tuple_frm)

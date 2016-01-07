@@ -305,9 +305,10 @@ let print_graph graph media =
 	           and name_s = (Graph_tableau.V.label s).name in
 	  if !cpt = 0 then incr cpt else print_string " ; " ; 
 	     if data_vertex.category == V_State then
-	         print_string ((string_of_movecs (Graph_tableau.E.label edge) media) ^ "->" ^ name_s)
-	     else
-		 print_string name_s
+	         print_string ((string_of_movecs (Graph_tableau.E.label edge).vector media) ^ "->" ^ name_s)
+	     else 
+		 print_string name_s;
+		print_string ("\n[debug] list of eventualities edges: " ^ (string_of_formulae ((Graph_tableau.E.label edge).event_e) "line"))
      ) graph v;
      print_endline("\n");
  ) sorted_lst

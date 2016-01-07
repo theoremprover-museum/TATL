@@ -65,7 +65,19 @@ let get_or_create_prestate ens_formulae lst_tuple=
   		 nb_neg = -1;
 		 } in 
 		Hashtbl.add h_prestates (string_of_formulae ens_formulae "line") vertex ; (vertex, true) 
-		
+
+let rec correspond_in_pre frm_origin lst_pre = match lst_pre with
+	| [] -> false
+	| t::q when t.frm_origin = frm_origin -> true
+	| _::q -> correspond_in_pre frm_origin q
+
+let get_event_origin_state_pre lst_event_state lst_event_pre =
+	(* First, we make the difference between the two list comparing origin's formulae *)
+	let rec search_state lst_state ens_event= match lst_state with
+	| [] ->  ens_event
+	| t::q when correspond_in_pre t.frm_origin lst_event_pre -> search_state q (State_Formulae.add t.frm_origin ens_event)
+	| _::q -> search_state q ens_event
+	in search_state lst_event_state State_Formulae.empty 				
 		
 (* return a set of states to treat and the new hashtable for state, the tableau graph is updated *)		
 let cons_from_pre lst_pre_todo  = 
@@ -87,7 +99,7 @@ let cons_from_pre lst_pre_todo  =
 					in let treat_top ens = if State_Formulae.cardinal ens > 1 then State_Formulae.remove Top ens else ens
 					in let (vertex, is_new) = get_or_create_state (treat_top ens) lst_event  
 				  in
-						Graph_tableau.add_edge tableau pre vertex;
+						Graph_tableau.add_edge_e tableau (Graph_tableau.E.create pre {vector=Movecs.empty;event_e=get_event_origin_state_pre pre.event lst_event;} vertex);
 	 						if not((Graph_tableau.V.label (vertex)).category = V_Empty) then 
 								if is_new then treat_lst t (vertex::lst_new) else treat_lst t lst_new 
 							else
@@ -96,6 +108,7 @@ let cons_from_pre lst_pre_todo  =
     		let lst_ens_tuple = Set_Tuple_Formulae.elements (rule_sr label_pre.ens_frm label_pre.event) in 
 	  		let lst_n = treat_lst lst_ens_tuple lst_new in cons_from q lst_n
    in cons_from lst_pre_todo []  		
+
 		
 let cons_from_states lst_states_todo = 
    let rec cons_from lst_state lst_new = match lst_state with
@@ -110,7 +123,8 @@ let cons_from_states lst_states_todo =
 					) tuple_frm [] 
 					in 
 					  let (vertex, is_new) = get_or_create_prestate ens_frm lst_tuple in 
-						Graph_tableau.add_edge_e tableau (Graph_tableau.E.create state ens_mv vertex); (* add a node and a labeled edge *)
+						(*%debug : mise à jour de la liste d'éventualités *)
+						Graph_tableau.add_edge_e tableau (Graph_tableau.E.create state {vector=ens_mv;event_e=get_event_origin_state_pre state.event lst_tuple;} vertex); (* add a node and a labeled edge *)
             if is_new then treat_lst t (vertex::lst_new) else treat_lst t lst_new 
 				in 
         let lst_ens_formulae_tuple = get_formulae_next_rule ls  in

@@ -156,8 +156,11 @@ type vertex = {
 }	 
 
 
-type edge = Movecs.t
-
+type edge = {
+	 vector : Movecs.t;
+	 event_e: State_Formulae.t;
+ 	}
+	
 module V = struct
   type t = vertex
   let compare = Pervasives.compare
@@ -168,7 +171,8 @@ end;;
 module E = struct
   type t = edge
   let compare = Pervasives.compare
-  let default = Movecs.empty
+	let equal = (=)
+	let default = {vector=Movecs.empty; event_e=State_Formulae.empty}
 end;;
 
 module Graph_tableau = Imperative.Digraph.ConcreteLabeled(V)(E);;

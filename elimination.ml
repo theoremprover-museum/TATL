@@ -10,7 +10,7 @@ open Global
 
  let is_complet_succ v = let ens_succ_mv =  
 		Graph_tableau.fold_succ_e (fun e ens_mv ->
-			let label_e = Graph_tableau.E.label e in Movecs.union ens_mv label_e
+			let label_e = Graph_tableau.E.label e in Movecs.union ens_mv label_e.vector
     ) tableau v Movecs.empty  
 	 in Movecs.equal ens_succ_mv (Graph_tableau.V.label v).assoc_movecs
   
@@ -71,7 +71,7 @@ let get_succ_to_be_verified ev s = Graph_tableau.fold_succ_e ( (* go through all
 			let num_ev = get_num_next_ev ev.next_frm (Graph_tableau.V.label s).lst_next_pos (Graph_tableau.V.label s).lst_next_neg in
 			let l_edge = Graph_tableau.E.label edge and prestate = Graph_tableau.E.dst edge in
 			(* Does the prestate correspond to the eventuality to be verified *) 
-				if is_eventuality ev.next_frm && (State_Formulae.mem ev.next_frm (Graph_tableau.V.label prestate).ens_frm) && (verif_edge s l_edge ev num_ev) then
+				if is_eventuality ev.next_frm && (State_Formulae.mem ev.next_frm (Graph_tableau.V.label prestate).ens_frm) && (verif_edge s l_edge.vector ev num_ev) then
 				let lst_ev_succ = Graph_tableau.fold_succ (
 				  (* get all the states starting from a prestate. *)
 					fun succ lst_s -> 	let ev_next = get_tuple ev.next_frm (Graph_tableau.V.label succ).event in 
