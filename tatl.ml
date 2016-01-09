@@ -24,7 +24,7 @@ let print_result_line sat vertex0 =
   if sat then print_string "satisfiable" else print_string "unsatisfiable"; print_endline ".";
 	print_endline "*"; print_newline();
 	let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
- (* Graphviz.graphviz_tableau "fichiers/tab_final.gv" frm;*)
+  Graphviz.graphviz_tableau "fichiers/tab_final.gv" frm;
 	print_string "Fin de la procedure : "; print_endline (string_of_float (Sys.time() -. !time_start));;
 
 
@@ -84,6 +84,12 @@ let rec ask_choice () =
          let frm = read_line() in let (vertex0,sat) = satisfiability_result frm  in 
                   print_result_line sat vertex0 ;
 									(*if sat then extract_model vertex0;*)
+									if sat then 
+									(
+										Model_extraction.nom_provisoire vertex0;
+										let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
+										Graphviz.graphviz_model_prop "fichiers/extracted_model.gv" frm
+									);
 									let nb1 = generator_state true and nb2 = generator_pre_state true in clear_all()
    | "2" -> raise Exit;
    | _ -> ask_choice();;
@@ -98,6 +104,12 @@ let print_begin () =
          let frm = read_line() in let (vertex0,sat) = satisfiability_result frm  in 
                   print_result_line sat vertex0 ;
 									(*if sat then extract_model vertex0;*)
+									if sat then 
+									(
+										Model_extraction.nom_provisoire vertex0;
+										let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
+										Graphviz.graphviz_model_prop "fichiers/extracted_model.gv" frm
+									);
 									let nb1 = generator_state true and nb2 = generator_pre_state true in clear_all()
       done
    with Exit -> print_endline "--- END ---" ;;

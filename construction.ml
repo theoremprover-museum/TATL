@@ -115,11 +115,9 @@ let function_co_sigma movec nb_pos nb_neg =
 	(Agents.fold (fun ag sum -> (List.assoc ag movec) - nb_pos + sum) ens_agent 0) mod nb_neg
 
 let search_origin_from_next_frm formula lst_event =  
-	print_endline ("[debug]search_origin (formula): " ^ Pretty_printer.string_of_formula formula "line");
- let rec search lst = match lst with
+	let rec search lst = match lst with
 | [] -> formula
 | t::q -> 
-	print_endline ("[debug]search_origin (t.next_frm):" ^ Pretty_printer.string_of_formula t.next_frm "line");
 	if formula = t.next_frm 
    then t.frm_origin 
 	 else search q

@@ -78,7 +78,15 @@ let get_event_origin_state_pre lst_event_state lst_event_pre =
 	| t::q when correspond_in_pre t.frm_origin lst_event_pre -> search_state q (State_Formulae.add t.frm_origin ens_event)
 	| _::q -> search_state q ens_event
 	in search_state lst_event_state State_Formulae.empty 				
-		
+
+let get_refined_lst_event lst_event vertex =
+	let rec refine lst_e new_lst = match lst_e with
+	| [] -> new_lst
+	| e::q -> let (b,_) = is_imm_real e vertex.ens_frm vertex.name in 
+				if b then refine q new_lst else refine q (e::new_lst)
+	in refine lst_event []
+	
+						
 (* return a set of states to treat and the new hashtable for state, the tableau graph is updated *)		
 let cons_from_pre lst_pre_todo  = 
    let rec cons_from lst_pre lst_new = match lst_pre with
@@ -99,7 +107,9 @@ let cons_from_pre lst_pre_todo  =
 					in let treat_top ens = if State_Formulae.cardinal ens > 1 then State_Formulae.remove Top ens else ens
 					in let (vertex, is_new) = get_or_create_state (treat_top ens) lst_event  
 				  in
-						Graph_tableau.add_edge_e tableau (Graph_tableau.E.create pre {vector=Movecs.empty;event_e=get_event_origin_state_pre pre.event lst_event;} vertex);
+					 (* raffinement de la liste d'éventualités : on ne garde que celles qui ne sont pas immédiatement réalisées *)
+					let refined_lst_event = get_refined_lst_event lst_event vertex in 
+						Graph_tableau.add_edge_e tableau (Graph_tableau.E.create pre {vector=Movecs.empty;event_e=get_event_origin_state_pre pre.event refined_lst_event;} vertex);
 	 						if not((Graph_tableau.V.label (vertex)).category = V_Empty) then 
 								if is_new then treat_lst t (vertex::lst_new) else treat_lst t lst_new 
 							else
@@ -174,8 +184,8 @@ let is_satisfiable set_frm media =
           print_graph tableau "line" )
 				);
 	  
-		(*let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
-		Graphviz.graphviz_tableau "fichiers/tab_inter.gv" frm; *)
+		let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
+		Graphviz.graphviz_tableau "fichiers/tab_inter.gv" frm; 
 	
 	
 	(* Elimination phase *)
