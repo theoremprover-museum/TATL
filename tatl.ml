@@ -23,16 +23,16 @@ let print_result_line sat vertex0 =
   print_string "* The formula is "; 
   if sat then print_string "satisfiable" else print_string "unsatisfiable"; print_endline ".";
 	print_endline "*"; print_newline();
-	let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
+	let _frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
  (* Graphviz.graphviz_tableau "fichiers/tab_final.gv" frm;*)
 	print_string "Fin de la procedure : "; print_endline (string_of_float (Sys.time() -. !time_start));;
 
 
 
- let extract_model vertex0 = 
-		let toto = Synthesis.synthesis vertex0 in
-		let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in
-		Graphviz.graphviz_model_prop "fichiers/extracted_model.gv" frm
+ (* let extract_model vertex0 =  *)
+ (*    	let toto = Synthesis.synthesis vertex0 in *)
+ (*    	let frm = Pretty_printer.string_of_formulae (vertex0.ens_frm) "line" in *)
+ (*    	Graphviz.graphviz_model_prop "fichiers/extracted_model.gv" frm *)
 
 (***************************************************************************************)
 (*                             Display functions                                       *)
@@ -48,14 +48,14 @@ let print_entete ()=
    print_endline "         ----------------------------------------------";
    print_newline() ;;
       
-let print_options() =  
-   print_newline();
-   print_endline "Options:";
-   print_endline "--------";
-   print_endline "1) Enter a formula";
-   print_endline "2) Close";
-   print_newline();
-   print_string "Your choice?  ";;
+(* let print_options() =   *)
+(*    print_newline(); *)
+(*    print_endline "Options:"; *)
+(*    print_endline "--------"; *)
+(*    print_endline "1) Enter a formula"; *)
+(*    print_endline "2) Close"; *)
+(*    print_newline(); *)
+(*    print_string "Your choice?  ";; *)
    
             (*---------------- satisfiability result ----------------*)
 
@@ -76,17 +76,17 @@ let satisfiability_result str_frm =
          
             (*---------------- Treatment of the first menu  ----------------*)
 
-let rec ask_choice () =
-  print_options();
-  let choice = read_line() in match choice with
-   | "1" -> print_endline "Enter a formula:  " ;
-		     time_start := Sys.time();
-         let frm = read_line() in let (vertex0,sat) = satisfiability_result frm  in 
-                  print_result_line sat vertex0 ;
-									(*if sat then extract_model vertex0;*)
-									let nb1 = generator_state true and nb2 = generator_pre_state true in clear_all()
-   | "2" -> raise Exit;
-   | _ -> ask_choice();;
+(* let rec ask_choice () = *)
+(*   print_options(); *)
+(*   let choice = read_line() in match choice with *)
+(*    | "1" -> print_endline "Enter a formula:  " ; *)
+(* 		     time_start := Sys.time(); *)
+(*          let frm = read_line() in let (vertex0,sat) = satisfiability_result frm  in  *)
+(*                   print_result_line sat vertex0 ; *)
+(* 									(\*if sat then extract_model vertex0;*\) *)
+(* 									let nb1 = generator_state true and nb2 = generator_pre_state true in clear_all() *)
+(*    | "2" -> raise Exit; *)
+(*    | _ -> ask_choice();; *)
 
 let print_begin () =
    print_entete ();
@@ -98,7 +98,7 @@ let print_begin () =
          let frm = read_line() in let (vertex0,sat) = satisfiability_result frm  in 
                   print_result_line sat vertex0 ;
 									(*if sat then extract_model vertex0;*)
-									let nb1 = generator_state true and nb2 = generator_pre_state true in clear_all()
+									let _nb1 = generator_state true and _nb2 = generator_pre_state true in clear_all()
       done
    with Exit -> print_endline "--- END ---" ;;
 

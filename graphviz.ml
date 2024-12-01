@@ -1,6 +1,5 @@
 open Modules
 open Global
-open Synthesis
 
 let get_lst_node_egde () =
 	Graph_tableau.fold_vertex (

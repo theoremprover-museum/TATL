@@ -23,7 +23,7 @@ let simpl_orp phi1 phi2 = match (phi1,phi2) with
 | State Top,_ | _, State Top -> State Top
 | psi1,psi2 -> OrP (psi1,psi2) 
 	
-let whatfalse path ens_frm path_frm st_name =
+let whatfalse path ens_frm path_frm _st_name =
 	let rec wf path_ev = match path_ev with
 	| AndP(p1,p2) -> simpl_andp (wf p1) (wf p2)
 	| OrP (p1,p2) -> simpl_orp (wf p1) (wf p2)
@@ -76,10 +76,10 @@ let verif_edge s l_edge ev num_ev=
 	| _ -> raise Impossible_case
 
 let get_num_next_ev next_ev lst_next_pos lst_next_neg =  match next_ev with
-| Coal (la,_) -> (try  Pervasives.fst (List.find (fun (n,b) -> compare_formula b (Coal(la,Next (State next_ev))) = 0) lst_next_pos) 
+| Coal (la,_) -> (try  fst (List.find (fun (_n,b) -> compare_formula b (Coal(la,Next (State next_ev))) = 0) lst_next_pos) 
 							with Not_found ->	-2)
 | CoCoal (la, _) when Agents.equal la !ag_all -> -1
-| CoCoal (la,_) -> (try Pervasives.fst (List.find (fun (n,b) -> compare_formula b (CoCoal(la,Next (State next_ev))) = 0) lst_next_neg)
+| CoCoal (la,_) -> (try fst (List.find (fun (_n,b) -> compare_formula b (CoCoal(la,Next (State next_ev))) = 0) lst_next_neg)
 								with Not_found -> -2)
 | _ -> raise Impossible_case
 	
@@ -181,8 +181,8 @@ let rec verif_succ ev st path =
 			then (Hashtbl.replace h_pst (p.name,path) {value=2;lst=[];lst2=[]}; false)  else
 			( Hashtbl.replace h_pst (p.name,path) {value=0;lst=(List.tl rep_lst);lst2=[]};
 			let state_v = List.hd rep_lst and  tail = List.tl rep_lst in 
-				   let sname = (Pervasives.fst state_v).name in 
-				   try Hashtbl.find h_st (sname,path) ;
+				   let sname = (fst state_v).name in 
+				   try ignore (Hashtbl.find h_st (sname,path)) ;
 							let new_list = List.tl rep_lst and new_tail = if List.length tail = 0 then [] else rep_lst2@[state_v] in
 							(Hashtbl.replace h_pst (p.name,path) {value=0;lst=new_list;lst2=new_tail}; verif_prestate (p::q) ) 
 				   with Not_found ->
@@ -196,8 +196,8 @@ let rec verif_succ ev st path =
 	  (
 			let lst_succ = get_succ_prestates ev p in 
 			let state_v = List.hd lst_succ and  tail = List.tl lst_succ in 
-				   let sname = (Pervasives.fst state_v).name in 
-				   try Hashtbl.find h_st (sname,path) ;
+				   let sname = (fst state_v).name in 
+				   try ignore (Hashtbl.find h_st (sname,path)) ;
 							let new_tail = if List.length tail = 0 then [] else [state_v] in
 							Hashtbl.add h_pst (p.name,path)  {value=0;lst=(List.tl lst_succ);lst2=new_tail};
 							verif_prestate (p::q)
@@ -227,7 +227,7 @@ let state_elimination ()  =
 		if (Graph_tableau.V.label v).category = V_State then (* This treatement is only for states *)
 		 (
     		if not(Hashtbl.mem h_suppr v.name) then
-    		let rec verif_vertex s = 
+    		let verif_vertex s = 
     			if is_complet_succ s then 
 (
     				if verif_ev_non_imm_real (get_ev_non_imm_real s) s  then () else remove_state s

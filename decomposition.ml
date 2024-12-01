@@ -65,7 +65,7 @@ let simplification_1 t =
 	Set_Path_Formulae.fold (
 		  fun ens_path new_set_ens -> let set_ens = Path_Formulae.fold (
 					fun frm new_ens -> match frm with
-					| Until (f1,State f2) -> if State_Formulae.mem f2 t.f1 then new_ens else Path_Formulae.add frm new_ens
+					| Until (_f1,State f2) -> if State_Formulae.mem f2 t.f1 then new_ens else Path_Formulae.add frm new_ens
 					| _ -> Path_Formulae.add frm new_ens
 				) ens_path Path_Formulae.empty in
 				if Path_Formulae.cardinal set_ens = 0 then new_set_ens else	Set_Path_Formulae.add set_ens new_set_ens
@@ -146,7 +146,7 @@ begin
 		let tuple1 = match p1 with
   		| State fs -> Gamma_sets.singleton { 
 								f1 = State_Formulae.singleton fs; f2 = Path_Formulae.singleton p1 ; f3 = singl_path (Until (p1, p2)) }
-  		| Always fp -> otimes
+  		| Always _fp -> otimes
 					  ( Gamma_sets.singleton { f1 = State_Formulae.singleton Top; f2 = Path_Formulae.singleton p1 ; f3 = Set_Path_Formulae.add (Path_Formulae.singleton p1) (singl_path  (Until (State Top, p2)))} )
 						(gamma_sets p1)
 			| Next (Always fp) -> Gamma_sets.singleton { f1 = State_Formulae.singleton Top ; f2= Path_Formulae.singleton p1 ; f3 = Set_Path_Formulae.add (Path_Formulae.singleton (Always fp)) (singl_path (Until (State Top, p2)))} 

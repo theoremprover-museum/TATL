@@ -76,7 +76,7 @@ let cons_from_pre lst_pre_todo  =
        let rec treat_lst lst_ens_tuple lst_new = match lst_ens_tuple with
        | [] -> lst_new
        | ens_tuple::t -> 
-					let rec get_detail ens_tuple =  
+					let get_detail ens_tuple =  
 						Tuple_Formulae.fold 
 							(fun tuple (e,l) -> if is_eventuality tuple.frm then 
 																(State_Formulae.add tuple.frm e, tuple::l)

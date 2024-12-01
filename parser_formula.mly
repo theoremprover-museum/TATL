@@ -52,7 +52,7 @@ state:
 | LANGLE agents RANGLE path { Coal($2,$4) }
 | LCROC agents RCROC LPAR path RPAR  { CoCoal($2,$5) }
 | LCROC agents RCROC path  { CoCoal($2,$4) }
-| error    { (Except.parse_error "state" ; Top)}
+| error    { (ignore (parse_error "state") ; Top)}
 ;
 
 path:
@@ -78,17 +78,17 @@ path:
 | LANGLE agents RANGLE path { State (Coal($2,$4)) }
 | LCROC agents RCROC LPAR path RPAR  { State (CoCoal($2,$5)) }
 | LCROC agents RCROC path  { State (CoCoal($2,$4)) }
-| error    { (Except.parse_error "path" ; State(Top)) }
+| error    { (ignore (parse_error "path") ; State(Top)) }
 ;
 
 
 agents:
 | agent VIRG agents { Agents.add $1 $3 }
 | agent	{ Agents.singleton $1 }
-| error    { parse_error "agents"; Agents.empty }
+| error    { ignore (parse_error "agents"); Agents.empty }
 ;
 
 agent:
 | AG { $1 }
-| error    { parse_error "agent"; 0  }
+| error    { ignore (parse_error "agent"); 0  }
 ;

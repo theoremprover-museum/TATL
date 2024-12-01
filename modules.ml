@@ -1,5 +1,4 @@
 open Graph;;
-open Graph.Pack.Digraph;;
 
 (*--------------------------------------------*)
 (*-----            Agents                -----*)
@@ -8,7 +7,7 @@ open Graph.Pack.Digraph;;
 module Agents = Set.Make(
 	struct
 		type t = int
-		let compare = Pervasives.compare
+		let compare = compare
 	end);;
 
 (*--------------------------------------------*)
@@ -17,13 +16,13 @@ module Agents = Set.Make(
 module Movecs = Set.Make(
 	struct
 		type t = (int * int) list  (* (num_agent * num_mov) list *)
-		let compare = Pervasives.compare
+		let compare = compare
 	end);;
 
 module Movecs_bool = Set.Make(
   struct
      type t = (Movecs.t * bool)
-     let compare = Pervasives.compare
+     let compare = compare
   end);;
 
 
@@ -61,16 +60,16 @@ let compare_formula f1 f2 = match (f1,f2) with
 | Top,Top -> 0
 | Top, _ -> -1
 | _, Top -> 1
-| Prop _, Prop _ -> Pervasives.compare f1 f2 
+| Prop _, Prop _ -> compare f1 f2 
 | Prop _, _ -> -1
 | _ , Prop _ -> 1
-| Coal (_,Next(State(_))), Coal (_,Next(State(_))) -> Pervasives.compare f1 f2 (* enforcable next-time formulae *)
+| Coal (_,Next(State(_))), Coal (_,Next(State(_))) -> compare f1 f2 (* enforcable next-time formulae *)
 | Coal (_,Next(State(_))), _ -> -1
 | _, Coal (_,Next(State(_))) -> 1
-| CoCoal (_,Next(State(_))), CoCoal (_,Next(State(_))) -> Pervasives.compare f1 f2 (* unavoidable next-time formulae *)
+| CoCoal (_,Next(State(_))), CoCoal (_,Next(State(_))) -> compare f1 f2 (* unavoidable next-time formulae *)
 | CoCoal (_,Next(State(_))), _ -> -1
 | _, CoCoal (_,Next(State(_))) -> 1
-| _ -> Pervasives.compare f1 f2
+| _ -> compare f1 f2
 	
 type cat_reali = NONE | TRUE | FALSE | MAYBE
 
@@ -84,7 +83,7 @@ module State_Formulae = Set.Make(  (* set of state formulae *)
 module Path_Formulae = Set.Make(   (* set of path formulae *)
 	struct
 		type t = path_formula
-		let compare = Pervasives.compare
+		let compare = compare
   end);;
 
 module Set_State_Formulae = Set.Make(  
@@ -130,8 +129,7 @@ type gamma_tuple = {
 module Gamma_sets = Set.Make(
 	 struct
 		type t = gamma_tuple
-		let compare = Pervasives.compare
-		let hash = Hashtbl.hash
+		let compare = compare
 	end);;
 
 
@@ -159,14 +157,14 @@ type edge = Movecs.t
 
 module V = struct
   type t = vertex
-  let compare = Pervasives.compare
+  let compare = compare
   let hash = Hashtbl.hash
   let equal = (=)
 end;;
 
 module E = struct
   type t = edge
-  let compare = Pervasives.compare
+  let compare = compare
   let default = Movecs.empty
 end;;
 
@@ -180,7 +178,7 @@ type node =   {
 
 module N = struct
   type t = node
-  let compare = Pervasives.compare
+  let compare = compare
   let hash = Hashtbl.hash
   let equal = (=)
 end;;
