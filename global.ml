@@ -18,6 +18,7 @@ let h_st = Hashtbl.create(300);;
 let h_prestate_default = Hashtbl.create(500);;
 let h_level_state = Hashtbl.create(500);;
 let h_suppr = Hashtbl.create(500);; 
+let h_cluster = Hashtbl.create(200);;
 let time_start = ref 0.0;;
 
 (* initialisation des hashtables *)
@@ -51,9 +52,10 @@ in Hashtbl.add h_prestates "" v; Hashtbl.clear h_prestates;
    Hashtbl.add h_st (v.name,State Top) 0; Hashtbl.clear h_pst;
    Hashtbl.add h_ev_st (Prop "p", v.name) 0 ; Hashtbl.clear h_ev_st;
    Hashtbl.add h_ev_st_wf (Prop "p", v.name) Top ; Hashtbl.clear h_ev_st_wf;
-	 Hashtbl.add h_prestate_default v v; Hashtbl.clear h_prestate_default;
-	 Hashtbl.add h_suppr "" ""; Hashtbl.clear h_suppr;
-	 Hashtbl.add h_level_state (0, v.name) n ; Hashtbl.clear h_level_state;;
+   Hashtbl.add h_prestate_default v v; Hashtbl.clear h_prestate_default;
+   Hashtbl.add h_suppr "" ""; Hashtbl.clear h_suppr;
+   Hashtbl.add h_level_state (0, v.name) n ; Hashtbl.clear h_level_state;
+   Hashtbl.add h_cluster n "" ; Hashtbl.clear h_cluster;;
 
 (* reinitialisation function *)
 let clear_all () = 
@@ -74,7 +76,8 @@ let clear_all () =
 let counter_since n  = let increment = ref (n - 1) in fun r-> (if r then increment:=0 else incr increment); !increment ;;
 let generator_state = let compt  = counter_since 1  in fun r -> "S" ^ string_of_int(compt r)
 and generator_pre_state = let compt = counter_since 1  in fun r -> "P" ^ string_of_int(compt r)
-and generator_node = let compt = counter_since 2  in fun r -> "n" ^ string_of_int(compt r);;
+and generator_node = let compt = counter_since 2  in fun r -> "n" ^ string_of_int(compt r)
+and generator_cluster = let compt = counter_since 1 in fun r -> "C" ^ string_of_int(compt r);;
 
 (* Get the set of agents included in a given formula. *)
 let rec search_agent_state frm = 	match frm with

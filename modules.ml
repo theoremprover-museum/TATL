@@ -178,7 +178,7 @@ module Graph_tableau = Imperative.Digraph.ConcreteLabeled(V)(E);;
 type node =   {
 	 name_node : string;
 	 name_state : string;
-	 prop : State_Formulae.t		
+	 prop : State_Formulae.t
 	}
 
 module N = struct
@@ -188,11 +188,43 @@ module N = struct
   let equal = (=)
 end;;
 
+module Graph_model = Imperative.Digraph.ConcreteLabeled(N)(E);;
+
 type lst_state = {
 	value: int;
 	lst : (vertex*formula_tuple )list;
 	lst2: (vertex*formula_tuple )list;
 	}
 	
-module Graph_model = Imperative.Digraph.ConcreteLabeled(N)(E);;
 
+(*--------------------------------------------*)
+(*-----             CLUSTERS             -----*)
+(*--------------------------------------------*)
+
+(* un cluster est un ensemble d'états. On souhaite partitionner *)
+(* les modèles en cluster pour appliquer l'algorithme de Kanellakis *)
+(* et Smolka revisité *)
+
+
+module Cluster = Set.Make (
+	struct
+		type t = node
+		let compare = compare
+	end);;
+	
+type cluster = {
+	nom : string;
+	element : Cluster.t
+}
+
+module Set_Nom_Cluster = Set.Make (
+	struct 
+		type t = string
+		let compare = compare
+    end);;
+	
+module Partition = Set.Make (
+	struct
+		type t = cluster
+		let compare = compare
+	end);;
