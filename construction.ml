@@ -32,7 +32,7 @@ let rec saturation formula = match formula.frm with
 			(saturation {frm=f2;path_frm=Path_Formulae.empty;next_frm=Top; frm_origin=formula.frm_origin})
 | Or (f1,f2) -> Set_Tuple_Formulae.union (saturation {frm=f1;path_frm=Path_Formulae.empty;next_frm=Top; frm_origin = formula.frm_origin}) 
 			(saturation {frm=f2;path_frm=Path_Formulae.empty;next_frm=Top; frm_origin = formula.frm_origin})
-| Coal(la,f1) | CoCoal (la,f1) -> 
+| Coal(_la,_f1) | CoCoal (_la,_f1) -> 
 	let set_gamma_comp = gamma_comp formula.frm formula.frm_origin in
   Tuple_Formulae.fold (
 		fun t ens ->  Set_Tuple_Formulae.union (
@@ -104,9 +104,9 @@ let create_lst_movecs nb_next =
 		List.fold_left (fun ens_mv mv -> Movecs.add mv ens_mv ) Movecs.empty lst
 
 (* Compute the function N(sigma) for a given move vector *)
-let rec function_n_sigma movec nb_pos = 
-  let lst_agent = Pervasives.fst( List.split(  (* to get the agent part of the move vector *)
-		List.filter (fun m -> if (Pervasives.snd m) >= nb_pos then true else false) movec )) (* get the negative moves *)
+let function_n_sigma movec nb_pos = 
+  let lst_agent = fst( List.split(  (* to get the agent part of the move vector *)
+		List.filter (fun m -> if (snd m) >= nb_pos then true else false) movec )) (* get the negative moves *)
   in List.fold_left (fun ens a -> Agents.add a ens) Agents.empty lst_agent
 	
 (* Compute the fonction Co(sigma) for a given move vector *)

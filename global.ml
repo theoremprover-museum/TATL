@@ -1,5 +1,4 @@
 open Modules
-open Except
 
 let ag_all = ref Agents.empty;;
 let contains_next = ref false;;
@@ -92,7 +91,7 @@ and search_agent_path frm = match frm with
 	| _ -> raise Except.Impossible_case
 	
 (* Get the set of agents included in a given set of formulae. *)
-let rec search_agents_in_set set_frm =
+let search_agents_in_set set_frm =
 	State_Formulae.fold 
 	( fun frm set_agent -> Agents.union (search_agent_state frm) set_agent) set_frm Agents.empty 
 
@@ -114,7 +113,7 @@ let rec search_agents_in_set set_frm =
 	| CoCoal (_,f) -> contains_next_frm_path f
 	| _ -> raise Except.Impossible_case
 	and contains_next_frm_path frm = match frm with
-	| State f -> false
+	| State _ -> false
 	| NegP f -> contains_next_frm_path f 
 	| AndP (f1,f2) -> contains_next_frm_path f1 || contains_next_frm_path f2
 	| OrP (f1,f2) -> contains_next_frm_path f1 || contains_next_frm_path f2

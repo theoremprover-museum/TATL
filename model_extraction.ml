@@ -17,7 +17,7 @@ let print_debug_couleur c = match c with
 | GRIS -> "Gris"
 | NOIR -> "Noir"
 
-let rec print_debug_lst_pred lst_edge = 
+let print_debug_lst_pred lst_edge = 
 	print_endline ("[debug] lst_pred :");
 	let rec print lst = match lst with
 	| [] -> print_newline()
@@ -25,7 +25,7 @@ let rec print_debug_lst_pred lst_edge =
 	| e::q -> let u = Graph_tableau.E.src e and v = Graph_tableau.E.dst e in print_string (v.name ^ ":" ^ u.name ^ " | " ) ; print q
 in print lst_edge
 
-let rec print_debug_lst_circuit lst_circuit = 
+let print_debug_lst_circuit lst_circuit = 
 	print_endline ("[debug] lst_circuit :");
 	let rec print lst = match lst with
 	| [] -> print_newline()
@@ -46,7 +46,7 @@ in print lst_edge
 let search_pred u lst_edge = 
 	let rec search lst = match lst with
 	| [] -> raise Not_found
-	| e::q when u= Graph_tableau.E.dst e -> e
+	| e::_ when u= Graph_tableau.E.dst e -> e
 	| _::q -> search q
 in search lst_edge 
 
@@ -84,7 +84,7 @@ let search_circuit init_prestate =
 	Graph_tableau.iter_vertex (
 		fun v -> Hashtbl.add h_couleur v.name BLANC 
 	) tableau;
-	let (lst_pred,lst_circuit) = visit_depth_first_search init_prestate [] [] in 
+	let (_lst_pred,lst_circuit) = visit_depth_first_search init_prestate [] [] in 
 	lst_circuit
 	
 	

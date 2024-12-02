@@ -46,8 +46,8 @@ let string_of_agents_line ens_agents =
 (* display.                           *)
 let rec string_of_movec vector media = match vector with
 	| [] -> if media = "web" then "&amp;empty;" else ""
-	| [(a,m)] -> string_of_int m
-	| (a,m)::q -> (string_of_int m) ^ "," ^ (string_of_movec q media)
+	| [(_a,m)] -> string_of_int m
+	| (_a,m)::q -> (string_of_int m) ^ "," ^ (string_of_movec q media)
 	
 	
 let string_of_movecs ens_movecs media=
@@ -281,7 +281,7 @@ let sort_vertex_graph graph =
 				((Graph_tableau.V.label v).name,v)::l
   ) graph [] in 
   List.sort (
-    fun (n1,v1) (n2,v2) -> let (part1a, part1b) = (Str.string_before n1 1, Str.string_after n1 1) 
+    fun (n1,_v1) (n2,_v2) -> let (part1a, part1b) = (Str.string_before n1 1, Str.string_after n1 1) 
                            and (part2a, part2b) = (Str.string_before n2 1, Str.string_after n2 1) in
 	if (part1a < part2a) || (part1a = part2a && ((int_of_string part1b) < (int_of_string part2b))) 
         then -1	else 1 

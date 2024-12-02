@@ -46,7 +46,7 @@ and transform_fnn_path frm = match frm with
 						OrP (Always f1_t , Until (f1_t, AndP(f1_t,f2_t))) 
 	| Event f -> Until(State Top, transform_fnn_path f)
 
-let rec transform_fnn frm = 
+let transform_fnn frm = 
 	let new_frm = transform_fnn_state frm in 
 	if compare_formula frm new_frm = 0 then new_frm else transform_fnn_state new_frm
 

@@ -68,7 +68,7 @@ let get_or_create_prestate ens_formulae lst_tuple=
 
 let rec correspond_in_pre frm_origin lst_pre = match lst_pre with
 	| [] -> false
-	| t::q when t.frm_origin = frm_origin -> true
+	| t::_ when t.frm_origin = frm_origin -> true
 	| _::q -> correspond_in_pre frm_origin q
 
 let get_event_origin_state_pre lst_event_state lst_event_pre =
@@ -96,7 +96,7 @@ let cons_from_pre lst_pre_todo  =
        let rec treat_lst lst_ens_tuple lst_new = match lst_ens_tuple with
        | [] -> lst_new
        | ens_tuple::t -> 
-					let rec get_detail ens_tuple =  
+					let get_detail ens_tuple =  
 						Tuple_Formulae.fold 
 							(fun tuple (e,l) -> if is_eventuality tuple.frm then 
 																(State_Formulae.add tuple.frm e, tuple::l)

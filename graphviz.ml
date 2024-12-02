@@ -1,6 +1,5 @@
 open Modules
 open Global
-open Synthesis
 
 let h_rename_event = Hashtbl.create(40);;
 Hashtbl.add h_rename_event "" Top; Hashtbl.clear h_rename_event;; 

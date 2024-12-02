@@ -1,0 +1,8 @@
+(executable
+  (libraries ocamlgraph str)
+  (public_name tatl))
+
+(ocamllex lexer_formula)
+
+(menhir
+  (modules parser_formula))

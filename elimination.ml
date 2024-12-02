@@ -61,9 +61,9 @@ let verif_edge s l_edge ev num_ev=
 	| _ -> raise Impossible_case
 
 let get_num_next_ev next_ev lst_next_pos lst_next_neg =  match next_ev with
-| Coal (la,_) -> Pervasives.fst (List.find (fun (n,b) -> compare_formula b (Coal(la,Next (State next_ev))) = 0) lst_next_pos)
+| Coal (la,_) -> fst (List.find (fun (_,b) -> compare_formula b (Coal(la,Next (State next_ev))) = 0) lst_next_pos)
 | CoCoal (la, _) when Agents.equal la !ag_all -> -1
-| CoCoal (la,_) -> Pervasives.fst (List.find (fun (n,b) -> compare_formula b (CoCoal(la,Next (State next_ev))) = 0) lst_next_neg)
+| CoCoal (la,_) -> fst (List.find (fun (_,b) -> compare_formula b (CoCoal(la,Next (State next_ev))) = 0) lst_next_neg)
 | _ -> raise Impossible_case
 	
 let get_succ_to_be_verified ev s = Graph_tableau.fold_succ_e ( (* go through all vectors from s *)
@@ -168,7 +168,7 @@ let state_elimination ()  =
 		if (Graph_tableau.V.label v).category = V_State then (* This treatement is only for states *)
 		 (
     		if Graph_tableau.mem_vertex tableau v then
-    		let rec verif_vertex s = 
+    		let verif_vertex s = 
     			if is_complet_succ s then 
     				if verif_ev_non_imm_real (get_ev_non_imm_real s) s  then () else remove_state s
     			else
